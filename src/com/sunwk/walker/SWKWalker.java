@@ -120,9 +120,6 @@ public class SWKWalker implements FileVisitor{
 					writer.addDocument(doc);
 				
 		      } else {
-		        // Existing index (an old copy of this document may have been indexed) so 
-		        // we use updateDocument instead to replace the old one matching the exact 
-		        // path, if present:
 		        System.out.println("updating " + file);
 		        writer.updateDocument(new Term("path", file.toString()), doc);
 		      }
@@ -135,17 +132,13 @@ public class SWKWalker implements FileVisitor{
 	boolean searchInText(Path file, Document lucene_doc){
 		boolean flag = false;
 		Charset charset  = Charset.forName("UTF-8");
-		
+		 
 		try(BufferedReader reader = Files.newBufferedReader(file, charset)){
 			String line = null;
 			
 			OUTERMOST:
 			while((line = reader.readLine())!=null){
 				lucene_doc.add(new TextField("contents", line, Field.Store.YES ));
-//				flag = searchText(line);
-//				if(flag){
-//					break OUTERMOST;
-//				}
 			}
 		}catch(IOException e){
 			
@@ -153,19 +146,6 @@ public class SWKWalker implements FileVisitor{
 			return flag;
 		}
 	}
-	
-//	boolean searchText(String text){
-//		boolean flag = false;
-//		
-//		for(int j=0; j < wordsarray.size(); ){
-//			if((text.toLowerCase()).contains(wordsarray.get(j).toLowerCase())){
-//				flag = true;
-//				break;
-//			}
-//		}		
-//		
-//		return flag;
-//	}
 
 	void searchInExcel(String file, Document lucene_doc){
 		Row row;
@@ -196,11 +176,7 @@ public class SWKWalker implements FileVisitor{
 							text = cell.getStringCellValue();
 							
 							lucene_doc.add(new TextField("contens", text, Field.Store.YES ));
-							
-//							flag = searchText(text);
-//							if(flag){
-//								break OUTERMOST;
-//							}
+
 						}
 					}
 				}
@@ -243,10 +219,7 @@ public class SWKWalker implements FileVisitor{
 					}
 					
 					lucene_doc.add(new TextField("contens", text, Field.Store.YES ));
-//					flag = searchText(text);
-//					if(flag){
-//						break OUTERMOST;
-//					}
+
 				}
 				
 				Notes notes = slides[i].getNotesSheet();				
@@ -255,11 +228,7 @@ public class SWKWalker implements FileVisitor{
 					for(int j = 0; j < runs.length; j++){
 						text = runs[j].getText();
 						lucene_doc.add(new TextField("contens", text, Field.Store.YES ));
-						
-//						flag = searchText(text);
-//						if(flag){
-//							break OUTERMOST;
-//						}
+
 					}
 				}
 			}
@@ -291,13 +260,7 @@ public class SWKWalker implements FileVisitor{
 			for(String paragraph : paragraphs)
 				lucene_doc.add(new TextField("contens", paragraph, Field.Store.YES ));
 			
-//			OUTERMOST:
-//			for(int i =0; i < paragraphs.length; i++){
-//				flag = searchText(paragraphs[i]);
-//				if(flag){
-//					break OUTERMOST;
-//				}
-//			}
+
 		}catch(Exception e){
 			
 		}finally{
@@ -331,10 +294,7 @@ public class SWKWalker implements FileVisitor{
 				pdfStripper.setEndPage(page + 1);
 				parsedText = pdfStripper.getText(pdDoc);
 				
-//				flag = searchText(parsedText);
-//				if(flag){
-//					break OUTERMOST;
-//				}
+
 				doc.add(new TextField("contens", parsedText, Field.Store.YES ));
 			}
 		}catch(Exception e){
@@ -443,12 +403,6 @@ public class SWKWalker implements FileVisitor{
 		
 		walk.writer.close();
 		Date end = new Date();
-		
-//		Iterable<Path> dirs = FileSystems.getDefault().getRootDirectories();
-//		
-//		for(Path root : dirs){
-//			Files.walkFileTree(root, opts, Integer.MAX_VALUE, walk);
-//		}
 		
 		System.out.println("-------------------------------------------------------------------");
 		for(String path_string : walk.documents){
